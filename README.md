@@ -158,7 +158,7 @@ Response:
 
 ---
 
-# 🐳 Docker Setup
+# Docker Setup
 
 ## Build Docker Image
 
@@ -210,7 +210,7 @@ docker stop <container_id>
 
 ---
 
-# 📦 requirements.txt
+# requirements.txt
 
 ```
 fastapi
@@ -220,7 +220,7 @@ numpy
 ```
 
 
-# 👨‍💻 Author
+# Author
 
 Aniket Patil
 
