@@ -15,7 +15,7 @@ spec:
       containers:
         - name: sentiment-api
           image: aniketpatil01/smart-sentiment-api:1.0
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - containerPort: 8000
 
