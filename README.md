@@ -1,226 +1,144 @@
 # Smart Sentiment API
 
-A production-ready, containerized Machine Learning REST API built using **FastAPI** and **Scikit-learn** for real-time sentiment analysis.
+## Project Overview
+
+Smart Sentiment API is a FastAPI-based microservice that provides sentiment analysis. This project demonstrates:
+
+* Python FastAPI backend
+* Docker containerization
+* Kubernetes deployment
+* Horizontal Pod Autoscaler (HPA)
+* Port-forwarding for local access
 
 ---
 
-# Project Overview
-
-Smart Sentiment API is a simple ML-powered web service that:
-
-- Accepts user text input
-- Analyzes sentiment using a trained ML model
-- Returns prediction as **Positive** or **Negative**
-
-This project demonstrates:
-
-- Machine Learning inference
-- REST API development
-- Clean Python project structure
-- Docker containerization
-- Production-style deployment
-
----
-
-# Architecture
-
-User → FastAPI → ML Model → Prediction → JSON Response
-
----
-
-#  Tech Stack
-
-- Python 3.12
-- FastAPI
-- Uvicorn
-- Scikit-learn
-- NumPy
-- Docker
-
----
-
-# Complete Project Structure
+## Project Structure
 
 ```
 smart-sentiment-api/
 │
 ├── app/
-│   ├── main.py          
-│   ├── model.py       
-│   └── __init__.py     
+│   ├── main.py                  
+│   └── main.py                   
 │
-├── requirements.txt     
-├── Dockerfile           
-├── README.md            
-└── venv/               
+├── Dockerfile          
+├── requirements.txt             
+├── k8s/
+│   ├── deployment.yaml        
+│   ├── service.yaml            
+│   ├── hpa.yaml                 
+│   └── ingress.yaml             
+└── README.md
 ```
 
 ---
 
-# Local Development Setup
+## Local Setup
 
-## Clone Repository
+1. **Clone the repository**:
 
-```
-git clone <your-repository-url>
+```bash
+git clone <repo-url>
 cd smart-sentiment-api
 ```
 
----
+2. **Setup Python virtual environment**:
 
-##  Create Virtual Environment
-
-### Mac/Linux
-
-```
-python -m venv venv
+```bash
+python3 -m venv venv
 source venv/bin/activate
-```
-
-### Windows
-
-```
-python -m venv venv
-venv\Scripts\activate
-```
-
-If activated successfully, you will see:
-
-```
-(venv)
-```
-
----
-
-## Install Dependencies
-
-```
 pip install -r requirements.txt
 ```
 
-To upgrade pip (if needed):
+3. **Run FastAPI locally**:
 
+```bash
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
-python -m pip install --upgrade pip
+
+* Test: `curl http://localhost:8000`
+* Response: `{"message":"Smart Sentiment API is running"}`
+
+---
+
+## Docker Setup
+
+1. **Build Docker Image**:
+
+```bash
+docker build -t smart-sentiment-api:latest .
+```
+
+2. **Tag Docker Image for Docker Hub**:
+
+```bash
+docker tag smart-sentiment-api:latest aniketpatil01/smart-sentiment-api:1.0
+```
+
+3. **Push Docker Image to Docker Hub**:
+
+```bash
+docker push aniketpatil01/smart-sentiment-api:1.0
+```
+
+4. **Check Docker Images**:
+
+```bash
+docker images
 ```
 
 ---
 
-##  Run Application (Local)
+## Kubernetes Setup (Kind Cluster)
 
-```
-uvicorn app.main:app --reload
-```
+1. **Create Kind Cluster** (if not already):
 
-Open in browser:
-
-```
-http://127.0.0.1:8000/docs
+```bash
+kind create cluster --name sentiment-cluster
 ```
 
-Swagger UI will appear.
+2. **Apply Kubernetes manifests**:
 
----
+```bash
+kubectl apply -f k8s/deployment.yaml
+kubectl apply -f k8s/service.yaml
+kubectl apply -f k8s/hpa.yaml
+# Optional
+kubectl apply -f k8s/ingress.yaml
+```
 
-# API Endpoints
+3. **Verify resources**:
 
-##  Health Check
-
-### GET /
-
-Response:
-
-```json
-{
-  "message": "Smart Sentiment API is running"
-}
+```bash
+kubectl get pods
+kubectl get svc
+kubectl get hpa
+kubectl get ingress
 ```
 
 ---
 
-## Sentiment Prediction
+## Access API via Port-forwarding
 
-### GET /predict?text=your_text
-
-Example:
-
-```
-/predict?text=I love this product
+```bash
+kubectl port-forward service/sentiment-service 8000:80
 ```
 
-Response:
-
-```json
-{
-  "prediction": "positive"
-}
-```
+* API accessible at: `http://localhost:8000`
 
 ---
 
-# Docker Setup
+## Notes
 
-## Build Docker Image
-
-```
-docker build -t smart-sentiment-api .
-```
+* Ingress is optional for local dev; port-forwarding is sufficient.
+* Make sure Docker image is pushed to Docker Hub if using `imagePullPolicy: Always`.
+* Resource limits, liveness/readiness probes are configured in `deployment.yaml`.
 
 ---
 
-## Run Docker Container
+## References
 
-```
-docker run -d -p 8000:8000 smart-sentiment-api
-```
-
-Explanation:
-- `-d` → Run in background
-- `-p 8000:8000` → Port mapping
-
----
-
-## Check Running Containers
-
-```
-docker ps
-```
-
-You should see:
-
-```
-0.0.0.0:8000->8000/tcp
-```
-
----
-
-##  Access API from Docker
-
-```
-http://localhost:8000/docs
-```
-
----
-
-## Stop Container
-
-```
-docker stop <container_id>
-```
-
----
-
-# requirements.txt
-
-```
-fastapi
-uvicorn
-scikit-learn
-numpy
-```
-
-
-# Author
-
-Aniket Patil
+* [FastAPI Docs](https://fastapi.tiangolo.com/)
+* [Kubernetes Docs](https://kubernetes.io/docs/home/)
+* [Docker Hub](https://hub.docker.com/)
 
