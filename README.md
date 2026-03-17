@@ -126,6 +126,8 @@ kubectl port-forward service/sentiment-service 8000:80
 
 * API accessible at: `http://localhost:8000`
 
+## Deploy Using Helm 
+
 ---
 
 ## Notes
